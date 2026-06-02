@@ -14,8 +14,7 @@
 <body>
   
 <div class="wrapper">     
-            <!-- Gedeelde navigatie -->
-            <?php include 'header.php'; ?>
+          
 
             <main>
                 <!DOCTYPE html>
