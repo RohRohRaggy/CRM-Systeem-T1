@@ -82,7 +82,7 @@
                         <span class="welcome-badge">Welkom!</span>
                         <h2>Fijn dat je er bent</h2>
                         <p>Dit is de startpagina voor iedereen. Gebruik hierboven de tabbladen om snel naar medewerkers, uren, opdrachten of support te gaan.</p>
-                        <p class="welcome-hint">Je supportticket wordt automatisch opgeslagen in de database en kan worden beheerd via de adminpagina.</p>
+                        
                     </div>
                 <?php else: ?>
                     <h2>UrenRegistratieSysteem</h2>
