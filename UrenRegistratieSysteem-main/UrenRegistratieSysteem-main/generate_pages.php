@@ -3,7 +3,6 @@ header('Content-Type: application/json');
 
 // Dit script genereert automatisch tabelpagina's op basis van de huidige database-structuur.
 // Belangrijk: dit bestand is bedoeld voor beheeracties en niet voor normaal gebruikersverkeer.
-
 // Databaseconfiguratie voor de lokale MySQL-instantie.
 $servername = "127.0.0.1";
 $username = "root";
