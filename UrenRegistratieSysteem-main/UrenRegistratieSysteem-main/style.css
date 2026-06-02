@@ -76,6 +76,18 @@ nav .right {
     max-width: 100%;
 }
 
+/* Center the tab links horizontally in the nav */
+.nav-tabs {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 50;
+}
+
 /* Header table navigation buttons */
 .table-link {
     display: inline-flex;
@@ -330,6 +342,16 @@ nav .right a:last-child {
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
+/* Support form specific tweaks (kept minimal, main rules inline in page) */
+.support-form input[type="text"], .support-form input[type="email"], .support-form textarea {
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.support-form input[type="text"]:focus, .support-form input[type="email"]:focus, .support-form textarea:focus {
+    box-shadow: 0 6px 18px rgba(95,130,224,0.12);
+    border-color: #7aa7ff;
+    outline: none;
+}
+
 
 /*text in hero section*/
 .hero-section .text {
@@ -338,6 +360,58 @@ nav .right a:last-child {
 
 .hero-section .text h2 {
     font-size: 35px;
+}
+
+.homepage-hero {
+    background: linear-gradient(145deg, #edf4ff 0%, #f8fbff 100%);
+    border-radius: 28px;
+    padding: 3.5rem 2.5rem;
+    margin: 0 3% 2rem;
+}
+
+.homepage-welcome {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.welcome-card {
+    background: #ffffff;
+    border: 1px solid rgba(62, 153, 255, 0.16);
+    border-radius: 24px;
+    padding: 26px 28px;
+    box-shadow: 0 22px 60px rgba(52, 86, 159, 0.08);
+}
+
+.welcome-badge {
+    display: inline-block;
+    margin-bottom: 14px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(59, 130, 246, 0.12);
+    color: #1d4ed8;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.welcome-card h2 {
+    margin-top: 0;
+    font-size: 3rem;
+    line-height: 1.05;
+    color: #102a55;
+}
+
+.welcome-card p {
+    color: #475569;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin: 0.95rem 0 0;
+}
+
+.welcome-hint {
+    color: #334155;
+    margin-top: 1rem;
 }
 
 /*links in hero section*/
@@ -524,6 +598,14 @@ nav .right a:last-child {
     margin-bottom: 10px;
     outline: none;
     resize: none;
+}
+
+/* Additional focus styles for input fields */
+.Contact.formulier .group form input:focus,
+.Contact.formulier .group form textarea:focus {
+    box-shadow: 0 6px 18px rgba(95,130,224,0.12);
+    border-color: #7aa7ff;
+    outline: none;
 }
 
 .Contact.formulier .group form button {

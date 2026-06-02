@@ -44,8 +44,8 @@
         $servername = "127.0.0.1";
         $username   = "root";
         $password   = "";
-        $dbname     = "UrenRegistratieSysteem";
-        $dbport     = 3307;
+        $dbname     = "testdatabase2";
+        $dbport     = 3306;
 
         mysqli_report(MYSQLI_REPORT_OFF);
         $conn = @new mysqli($servername, $username, $password, $dbname, $dbport);
