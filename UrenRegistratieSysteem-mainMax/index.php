@@ -27,8 +27,8 @@
                     $servername = "127.0.0.1";
                     $username   = "root";
                     $password   = "";
-                    $dbname     = "UrenRegistratieSysteem";
-                    $dbport     = 3307;
+                    $dbname     = "UrenRegister";
+                    $dbport     = 3306;
 
                     // Maak verbinding; als dat lukt tonen we alle tabelpagina-links.
                     mysqli_report(MYSQLI_REPORT_OFF);

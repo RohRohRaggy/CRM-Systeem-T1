@@ -4,10 +4,10 @@ header('Content-Type: application/json');
 
 // Databaseconfiguratie voor schema-uitlezing.
 $servername = "127.0.0.1";
-$username   = "root";
-$password   = "";
-$dbname     = "UrenRegistratieSysteem";
-$dbport     = 3307;
+$username = "root";
+$password = "";
+$dbname = "UrenRegister";
+$dbport = 3306;
 
 mysqli_report(MYSQLI_REPORT_OFF);
 // Maak verbinding met de database.

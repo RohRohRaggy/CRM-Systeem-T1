@@ -1,136 +1,148 @@
-// Centrale statusvlag voor beheermodus; bepaalt of bewerkingsfuncties actief zijn.
+// Centrale statusvlaggen voor de rollen
 let adminMode = false;
-
-// Deze IIFE houdt hashinglogica lokaal en voorkomt losse globale hulpfuncties.
-const verifyAdminPassword = (() => {
-    // Zoutwaarde en verwachte hash zijn opgesplitst om niet als een enkele makkelijke string zichtbaar te zijn.
-    const s = "sFaZbBfE+QP/" + "A7WRS2SlPw==";
-    const h = "sF6dGIjZOZ/L" + "uI3i9u26lVobII1vC3dIo44u183Z3Dc=";
-    const it = 210000;
-
-    const b64ToBytes = (b64) => {
-        const bin = atob(b64);
-        const bytes = new Uint8Array(bin.length);
-        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-        return bytes;
-    };
-
-    const bytesToB64 = (bytes) => {
-        let bin = "";
-        bytes.forEach((b) => (bin += String.fromCharCode(b)));
-        return btoa(bin);
-    };
-
-    const deriveKeyB64 = async (password) => {
-        const enc = new TextEncoder();
-        const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), {name: "PBKDF2"}, false, ["deriveBits"]);
-
-        const bits = await crypto.subtle.deriveBits({
-            name: "PBKDF2", hash: "SHA-256", salt: b64ToBytes(s), iterations: it
-        }, keyMaterial, 256);
-
-        return bytesToB64(new Uint8Array(bits));
-    };
-
-    // Retourneer een controlefunctie die waar/onwaar oplevert op basis van het afgeleide wachtwoord.
-    return async (password) => (await deriveKeyB64(password)) === h;
-})();
+let employeeMode = false;
 
 // Initialiseer de beheerknop en herstel eerdere beheerstatus vanuit localStorage.
 const initAdminButton = () => {
     const adminBtn = document.getElementById('adminBtn');
     if (!adminBtn) return;
 
-    // Als adminmodus eerder actief was, zet die meteen terug zonder opnieuw te vragen.
+    // Herstel status vanuit localStorage bij pagina herladen
     if (localStorage.getItem('adminModeEnabled') === 'true') {
-        enableAdminMode(true); // `true` betekent: melding overslaan en direct activeren.
+        enableAdminMode(true);
+    } else if (localStorage.getItem('employeeModeEnabled') === 'true') {
+        enableEmployeeMode(localStorage.getItem('loggedInUserId'), true);
     }
 
     adminBtn.addEventListener("click", async () => {
-        if (!adminMode) {
-            const password = prompt("Voer beheerderswachtwoord in:");
+        if (!adminMode && !employeeMode) {
+            const username = prompt("Voer je werkmail in:");
+            if (!username) return;
+
+            const password = prompt("Voer je wachtwoord in:");
             if (!password) return;
 
-            if (await verifyAdminPassword(password)) {
-                enableAdminMode();
-            } else {
-                alert("Onjuist wachtwoord!");
+            // Stuur de gegevens naar de server voor controle in de database
+            const formData = new FormData();
+            formData.append('action', 'login');
+            formData.append('username', username);
+            formData.append('password', password);
+
+            try {
+                const response = await fetch('admin_handler.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    // Check welke rol de database heeft teruggegeven
+                    if (result.role === 'admin') {
+                        enableAdminMode();
+                    } else if (result.role === 'medewerker') {
+                        enableEmployeeMode(result.medewerker_id);
+                    }
+                } else {
+                    alert(result.error || "Inloggen mislukt");
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                alert("Er is iets fout gegaan bij het inloggen");
             }
         } else {
-            disableAdminMode();
+            disableModes();
         }
     });
 };
 
-// Zet beheermodus aan, pas knopstijl aan en injecteer bewerkingsknoppen in de pagina.
+// Schakel Adminmodus in (Volledige rechten)
 const enableAdminMode = (skipAlert = false) => {
     adminMode = true;
     localStorage.setItem('adminModeEnabled', 'true');
     document.body.classList.add('admin-mode');
 
+    updateButtonStyle('#27ae60', 'Beheermodus verlaten');
+    makeTableEditable();
+    addAdminControls(); // Krijgt alle beheertools
+
+    if (!skipAlert) alert('Beheermodus ingeschakeld (Admin)!');
+};
+
+// Schakel Medewerkermodus in (Beperkte rechten tot eigen rij)
+const enableEmployeeMode = (userId, skipAlert = false) => {
+    employeeMode = true;
+    localStorage.setItem('employeeModeEnabled', 'true');
+    localStorage.setItem('loggedInUserId', userId); // Onthoud wie er is ingelogd
+    document.body.classList.add('employee-mode');
+
+    updateButtonStyle('#2980b9', 'Medewerkermodus verlaten');
+    makeTableEditable(); 
+
+    if (!skipAlert) alert('Medewerkermodus ingeschakeld!');
+};
+
+// Hulpfunctie voor de stijl van de lock-knop
+const updateButtonStyle = (color, title) => {
     const adminBtn = document.getElementById('adminBtn');
     if (adminBtn) {
         adminBtn.innerHTML = '<i class="fas fa-lock-open"></i>';
-        adminBtn.style.background = 'linear-gradient(135deg, #52c234 0%, #27ae60 100%)';
-        adminBtn.style.boxShadow = '0 4px 12px rgba(39, 174, 96, 0.4)';
-        adminBtn.title = 'Beheermodus verlaten';
-    }
-
-    // Maak alle tabelcellen inline bewerkbaar.
-    makeTableEditable();
-
-    // Voeg beheeracties toe zoals rij/kolom/tabelbeheer.
-    addAdminControls();
-
-    if (!skipAlert) {
-        alert('Beheermodus ingeschakeld!');
+        adminBtn.style.background = `linear-gradient(135deg, ${color} 0%, #2c3e50 100%)`;
+        adminBtn.style.boxShadow = `0 4px 12px ${color}66`;
+        adminBtn.title = title;
     }
 };
-// Zet beheermodus uit en herstel de normale weergave.
-const disableAdminMode = () => {
+
+// Schakel alle modi uit en herstel de pagina
+const disableModes = () => {
     adminMode = false;
+    employeeMode = false;
     localStorage.removeItem('adminModeEnabled');
-    document.body.classList.remove('admin-mode');
+    localStorage.removeItem('employeeModeEnabled');
+    localStorage.removeItem('loggedInUserId'); // Wis het opgeslagen ID
+    document.body.classList.remove('admin-mode', 'employee-mode');
 
     const adminBtn = document.getElementById('adminBtn');
     if (adminBtn) {
         adminBtn.innerHTML = '<i class="fas fa-lock"></i>';
         adminBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         adminBtn.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
-        adminBtn.title = 'Beheermodus';
+        adminBtn.title = 'Inloggen';
     }
 
-    // Verwijder dynamisch ingevoegde beheerknoppen.
-    removeAdminControls();
-
-    // Herlaad pagina om editable status en tijdelijke wijzigingen visueel op te schonen.
     location.reload();
 };
 
-// Markeer elke tabelcel als bewerkbaar en sla wijzigingen op bij verlies van focus.
+// Markeer de toegestane tabelcellen als bewerkbaar en sla wijzigingen op.
 const makeTableEditable = () => {
     const table = document.querySelector('.data-table');
     if (!table) return;
 
+    const loggedInUserId = localStorage.getItem('loggedInUserId');
     const cells = table.querySelectorAll('tbody td');
+    
     cells.forEach(cell => {
+        const row = cell.closest('tr');
+        const idCell = row.querySelector('td:first-child');
+        const rowIdValue = idCell.textContent.trim();
+
+        // Als je een gewone medewerker bent, mag je ALLEEN je eigen medewerker_ID bewerken
+        if (employeeMode && rowIdValue !== loggedInUserId) {
+            cell.contentEditable = false;
+            return; // Sla deze cel over, wordt niet bewerkbaar
+        }
+
+        // Admins en de medewerker zelf krijgen wel toegang tot de cellen
         cell.contentEditable = true;
         cell.classList.add('editable-cell');
 
         cell.addEventListener('blur', async function () {
-            const row = this.closest('tr');
             const cellIndex = Array.from(row.children).indexOf(this);
             const headerCell = table.querySelector(`thead th:nth-child(${cellIndex + 1})`);
             const columnName = headerCell.dataset.column;
-
-            // Eerste kolom wordt als rij-id gebruikt voor bijwerken op de server.
-            const idCell = row.querySelector('td:first-child');
-            const idValue = idCell.textContent.trim();
-
             const tableName = document.body.dataset.currentTable;
             const newValue = this.textContent.trim();
 
-            const success = await updateCell(tableName, columnName, newValue, idValue);
+            const success = await updateCell(tableName, columnName, newValue, rowIdValue);
             if (success) {
                 this.classList.add('cell-updated');
                 setTimeout(() => this.classList.remove('cell-updated'), 1000);
@@ -149,7 +161,7 @@ const updateCell = async (table, column, value, idValue) => {
         formData.append('table', table);
         formData.append('column', column);
         formData.append('value', value);
-        formData.append('id_column', 'id');
+        formData.append('id_column', 'medewerker_ID'); // Koppeling met jouw database identifier
         formData.append('id_value', idValue);
 
         const response = await fetch('admin_handler.php', {
@@ -224,7 +236,6 @@ const addNewRow = async () => {
 
         const result = await response.json();
         if (result.success) {
-            // Beheermodus komt na herladen terug via localStorage.
             location.reload();
         } else {
             alert('Rij toevoegen mislukt: ' + result.error);
@@ -251,7 +262,7 @@ const deleteRow = async (idValue) => {
     const formData = new FormData();
     formData.append('action', 'delete_row');
     formData.append('table', tableName);
-    formData.append('id_column', 'id');
+    formData.append('id_column', 'medewerker_ID'); 
     formData.append('id_value', idValue);
 
     try {
@@ -365,11 +376,9 @@ const createTable = async (tableName) => {
 
         const result = await response.json();
         if (result.success) {
-            // Regeneratie gebeurt automatisch zodat direct een bijpassend .php-bestand ontstaat.
             await regeneratePagesQuietly();
-
             alert('Tabel gemaakt! In beheermodus kunnen rijen en kolommen worden beheerd.');
-            window.location.href = `${tableName}.php`; // Navigeer direct naar de nieuwe tabelpagina.
+            window.location.href = `${tableName}.php`;
         } else {
             alert('Tabel maken mislukt: ' + result.error);
         }
@@ -392,7 +401,7 @@ const regeneratePagesQuietly = async () => {
     }
 };
 
-    // Bevestigingsstap voor verwijderen van complete tabel.
+// Bevestigingsstap voor verwijderen van complete tabel.
 const showDeleteTableDialog = () => {
     const tableName = document.body.dataset.currentTable;
 
@@ -419,9 +428,7 @@ const deleteTable = async (tableName) => {
         const result = await response.json();
         if (result.success) {
             await regeneratePagesQuietly();
-
             await deletePhysicalFile(tableName);
-
             alert('Tabel succesvol verwijderd!');
             window.location.href = 'index.php';
         } else {
@@ -442,7 +449,6 @@ const deletePhysicalFile = async (tableName) => {
         await fetch('admin_handler.php', {method: 'POST', body: formData});
     } catch (error) {
         console.error('Fout bij verwijderen van bestand:', error);
-
     }
 };
 
@@ -452,7 +458,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Handmatige beheertaak: alle tabelpagina's opnieuw opbouwen en verweesde bestanden opruimen.
-
 const regeneratePages = async () => {
     if (!confirm('Dit genereert alle tabelpagina\'s opnieuw en ruimt ongebruikte bestanden op. Doorgaan?')) {
         return;
