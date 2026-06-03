@@ -33,7 +33,15 @@ $protectedFiles = [
     'searchfunction.js',
     'admin.js',
     'style.css',
-    'Team_3.php'
+    'Team_3.php',
+    'homepagina.php',
+    'support_ticket_pagina.php'
+];
+
+// Pagina's die los van de tabelgenerator blijven bestaan.
+$reservedTableNames = [
+    'homepagina',
+    'support_ticket_pagina'
 ];
 
 // Lees alle huidige tabellen uit de database.
@@ -81,6 +89,11 @@ foreach ($files as $file) {
 
 // Stap 2: maak voor elke tabel een vers pagina-bestand op basis van de template-aanpak.
 foreach ($databaseTables as $tableName) {
+    // Reserveer speciale pagina's zodat ze niet worden overschreven door de tabelgenerator.
+    if (in_array($tableName, $reservedTableNames, true)) {
+        continue;
+    }
+
     $filename = $tableName . '.php';
     
     // Inhoud van elk gegenereerd bestand: stel de tabel in en include de centrale template.
