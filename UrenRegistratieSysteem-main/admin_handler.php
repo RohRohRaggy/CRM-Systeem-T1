@@ -188,14 +188,14 @@ switch ($action) {
         $filename = $_POST['filename'] ?? '';
 
         // Accepteer alleen veilige bestandsnamen met letters/cijfers/underscore en een PHP-extensiepatroon.
-        if (!preg_match('/^[a-zA-Z0-9_]+\.phhp$/', $filename)) {
+        if (!preg_match('/^[a-zA-Z0-9_]+\.php$/', $filename)) {
             echo json_encode(['success' => false, 'error' => 'Ongeldige bestandsnaam']);
             break;
         }
 
         // Bescherm kernbestanden van het systeem tegen verwijdering.
         $protected = ['index.php', 'table_template.php', 'admin_handler.php', 
-                      'generate_pages.php', 'get_schema.php'];
+                      'generate_pages.php', 'get_schema.php', 'homepagina.php', 'support_ticket_pagina.php'];
         if (in_array($filename, $protected)) {
             echo json_encode(['success' => false, 'error' => 'Beveiligd bestand kan niet worden verwijderd']);
             break;
