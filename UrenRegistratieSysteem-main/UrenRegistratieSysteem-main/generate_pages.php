@@ -34,7 +34,10 @@ $protectedFiles = [
     'searchfunction.js',
     'admin.js',
     'style.css',
-    'Team_3.php'
+    'Team_3.php',
+    'homepagina.php',
+    "support.php",
+    "test_gebruikers.php"
 ];
 
 // Lees alle huidige tabellen uit de database.
