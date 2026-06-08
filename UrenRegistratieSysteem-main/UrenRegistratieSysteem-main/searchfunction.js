@@ -399,6 +399,154 @@ const getClosestName = (table, nameQuery) => {
     return bestMatch;
 };
 
+// Collect potential suggestion items: table names, column names, and visible row names
+const collectSuggestions = (query) => {
+    if (!query) return [];
+    const q = query.toLowerCase();
+    const items = [];
+
+    // table names / display names
+    Object.values(tableMap).forEach((t) => {
+        if (!t) return;
+        const label = t.displayName || t.name;
+        if (label.toLowerCase().includes(q)) items.push({ label, value: label, meta: 'table' });
+    });
+
+    // collect unique names from visible tables (second column values)
+    const seen = new Set();
+    const tables = document.querySelectorAll('.data-table');
+    tables.forEach((tbl) => {
+        const heading = tbl.closest('section') ? (tbl.closest('section').querySelector('h2') || { textContent: '' }).textContent.toLowerCase() : '';
+        if (activeFilter !== 'all' && heading && !heading.toLowerCase().includes(activeFilter)) return;
+        tbl.querySelectorAll('tbody tr').forEach((row) => {
+            const cell = row.querySelector('td:nth-child(2)');
+            if (!cell) return;
+            const text = cell.textContent.trim();
+            if (text && text.toLowerCase().includes(q) && !seen.has(text)) {
+                seen.add(text);
+                items.push({ label: text, value: text, meta: 'row' });
+            }
+        });
+    });
+
+    // Also suggest column names
+    Object.keys(columnMap).forEach((col) => {
+        if (col.includes(q)) items.push({ label: col, value: col, meta: 'column' });
+    });
+
+    // dedupe and sort by relevance (simple heuristic)
+    const uniq = [];
+    const added = new Set();
+    items.forEach((it) => {
+        const key = it.label.toLowerCase();
+        if (!added.has(key)) { added.add(key); uniq.push(it); }
+    });
+
+    // sort: exact startsWith first, then contains
+    uniq.sort((a, b) => {
+        const ax = a.label.toLowerCase();
+        const bx = b.label.toLowerCase();
+        const as = ax.startsWith(q) ? 0 : 1;
+        const bs = bx.startsWith(q) ? 0 : 1;
+        if (as !== bs) return as - bs;
+        return ax.length - bx.length;
+    });
+
+    return uniq;
+};
+
+// Handle input events with debounce
+let inputDebounce = null;
+const handleInput = (e) => {
+    const val = (e.target.value || '').trim();
+    if (inputDebounce) clearTimeout(inputDebounce);
+    inputDebounce = setTimeout(() => {
+        if (!val) { clearSuggestions(); return; }
+        const items = collectSuggestions(val);
+        renderSuggestions(items);
+    }, 150);
+};
+
+searchInput && searchInput.addEventListener('input', handleInput);
+
+// Keyboard navigation for suggestions
+searchInput && searchInput.addEventListener('keydown', (e) => {
+    if (!visibleSuggestions.length) return;
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = (selectedSuggestionIndex + 1) % visibleSuggestions.length;
+        highlightSuggestion(next);
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = (selectedSuggestionIndex - 1 + visibleSuggestions.length) % visibleSuggestions.length;
+        highlightSuggestion(prev);
+    } else if (e.key === 'Enter') {
+        if (selectedSuggestionIndex >= 0) {
+            e.preventDefault();
+            const el = visibleSuggestions[selectedSuggestionIndex];
+            if (el) {
+                searchInput.value = el.dataset.value;
+                clearSuggestions();
+                performSearch(el.dataset.value);
+            }
+        } else {
+            performSearch(searchInput.value.trim());
+        }
+    } else if (e.key === 'Escape') {
+        clearSuggestions();
+    }
+});
+
+// Close suggestions when clicking outside
+document.addEventListener('click', (ev) => {
+    if (!suggestionBox.contains(ev.target) && ev.target !== searchInput) {
+        clearSuggestions();
+    }
+});
+
+// render filters once schema loaded
+const waitForSchemaRender = setInterval(() => {
+    if (schemaLoaded) { renderFilters(); clearInterval(waitForSchemaRender); }
+}, 200);
+
+// performSearch: existing logic (try id parse, name search etc.)
+const performSearch = (query) => {
+    if (!query) return;
+    // reuse parseIdSearch and findRowInAllTables etc.
+    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const idSearch = parseIdSearch(words);
+    if (idSearch && idSearch.id) {
+        if (idSearch.tableName) {
+            const row = findRowByIdInTable(idSearch.tableName, idSearch.id);
+            if (row) return highlightRow(row);
+        }
+        if (idSearch.tableSearchKeyword) {
+            const res = findRowByIdInTableFlexible(idSearch.tableSearchKeyword, idSearch.id);
+            if (res && res.row) return highlightRow(res.row);
+        }
+    }
+
+    // try name-based search across tables (respect activeFilter)
+    const found = findRowInAllTables(query);
+    if (found) {
+        highlightRow(found.row);
+        return;
+    }
+
+    // fallback: closest fuzzy match
+    const closest = getClosestNameInAllTables(query);
+    if (closest) {
+        const found2 = findRowInAllTables(closest);
+        if (found2) highlightRow(found2.row);
+    }
+};
+
+// wire search button
+searchBtn && searchBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    performSearch(searchInput.value.trim());
+});
+
 // Zet exact een suggestieknop in de UI.
 const setSuggestion = (text, onClick) => {
     if (!suggestion) {

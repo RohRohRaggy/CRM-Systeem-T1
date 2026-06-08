@@ -34,12 +34,16 @@
 
         <div class="right">
             <?php
+            // Voeg vaste links toe zodat Home en Support altijd als tabs zichtbaar zijn.
+            echo '<a class="table-link" href="homepagina.php">Homepagina</a>';
+            echo '<a class="table-link" href="support_ticket_pagina.php">Support</a>';
+
             // Maak opnieuw een DB-verbinding om dynamische navigatielinks op te bouwen.
             $servername = "127.0.0.1";
             $username   = "root";
             $password   = "";
-            $dbname     = "UrenRegistratieSysteem";
-            $dbport     = 3307;
+            $dbname     = "UrenRegister";
+            $dbport     = 3306;
 
             mysqli_report(MYSQLI_REPORT_OFF);
             $conn = @new mysqli($servername, $username, $password, $dbname, $dbport);
@@ -48,6 +52,9 @@
                 if ($tablesResult && $tablesResult->num_rows > 0) {
                     while ($tableRow = $tablesResult->fetch_array()) {
                         $tableName = $tableRow[0];
+                            if ($tableName === 'medewerker_rechten') {
+                                continue;
+                            }
                         // Toon een leesbare knopnaam voor elke tabel.
                         $displayName = ucwords(str_replace('_', ' ', $tableName));
                         echo '<a class="table-link" href="' . htmlspecialchars($tableName) . '.php">' . htmlspecialchars($displayName) . '</a>';
@@ -71,9 +78,17 @@
     </nav>
 
     <main>
-        <section class="hero-section">
-            <div class="text">
-                <h2>UrenRegistratieSysteem</h2>
+        <section class="hero-section<?php echo $currentTableName === 'homepagina' ? ' homepage-hero' : ''; ?>">
+            <div class="text<?php echo $currentTableName === 'homepagina' ? ' homepage-welcome' : ''; ?>">
+                <?php if ($currentTableName === 'homepagina'): ?>
+                    <div class="welcome-card">
+                        <span class="welcome-badge">Welkom!</span>
+                        <h2>Fijn dat je er bent</h2>
+                        <p>Dit is de startpagina voor iedereen. Gebruik hierboven de tabbladen om snel naar medewerkers, uren, opdrachten of support te gaan.</p>
+                    </div>
+                <?php else: ?>
+                    <h2>UrenRegistratieSysteem</h2>
+                <?php endif; ?>
             </div>
         </section>
 
@@ -84,89 +99,94 @@
                 if ($conn->connect_error) {
                     echo '<div class="record">Verbinding mislukt: ' . htmlspecialchars($conn->connect_error) . '</div>';
                 } else {
-                    // Gebruik de tabelnaam uit de pagina-context als primaire bron.
-                    $tableParam = $currentTableName;
-
-                    // Lees nogmaals alle tabellen; hiermee valideren we of de gekozen tabel bestaat.
-                    $tables = [];
-                    $tablesResult = $conn->query("SHOW TABLES");
-                    if ($tablesResult && $tablesResult->num_rows > 0) {
-                        while ($tableRow = $tablesResult->fetch_array()) {
-                            $tables[] = $tableRow[0];
-                        }
-                    }
-
-                    // Fallback naar de eerste beschikbare tabel als er geen specifieke tabel is gezet.
-                    if (!$tableParam && count($tables) > 0) {
-                        $tableParam = $tables[0];
-                    }
-
-                    // Ga alleen verder als de tabel ook echt in de databaselijst voorkomt.
-                    if ($tableParam && in_array($tableParam, $tables, true)) {
-                        $displayName = ucwords(str_replace('_', ' ', $tableParam));
-
-                        // Haal alle kolommen op zodat de tabelkop en SELECT-query dynamisch zijn.
-                        $columnsResult = $conn->query("SHOW COLUMNS FROM `$tableParam`");
-                        $columns = [];
-
-                        if ($columnsResult && $columnsResult->num_rows > 0) {
-                            while ($columnRow = $columnsResult->fetch_assoc()) {
-                                $columns[] = $columnRow['Field'];
-                            }
-                        }
-
-                        if (!empty($columns)) {
-                            // Bouw dynamisch een veilige kolomlijst op voor de SELECT-query.
-                            $columnList = implode(', ', array_map(function($col) { return "`$col`"; }, $columns));
-                            $sql = "SELECT $columnList FROM `$tableParam`";
-                            $result = $conn->query($sql);
-
-                            // Toon altijd de tabelstructuur, ook als er nog geen records zijn.
-                            echo '<section class="Data"><h2>' . htmlspecialchars($displayName) . '</h2>';
-                            echo '<div class="table-wrapper">';
-                            echo '<table class="data-table">';
-                            echo '<thead>';
-                            echo '<tr>';
-
-                            foreach ($columns as $column) {
-                                $columnId = strtolower($column) . '-column';
-                                $displayColumn = ucfirst(str_replace('_', ' ', $column));
-                                echo '<th id="' . htmlspecialchars($columnId) . '" data-column="' . htmlspecialchars($column) . '">' . htmlspecialchars($displayColumn) . '</th>';
-                            }
-
-                            echo '</tr>';
-                            echo '</thead>';
-                            echo '<tbody>';
-
-                            if ($result && $result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                    echo '<tr>';
-                                    foreach ($columns as $column) {
-                                        // Escapen van celwaarden voorkomt XSS bij gebruikersinvoer.
-                                        echo '<td>' . htmlspecialchars($row[$column] ?? '') . '</td>';
-                                    }
-                                    echo '</tr>';
-                                }
-                            } else {
-                                // Toon een duidelijke leegstatus als er nog geen data bestaat.
-                                echo '<tr><td colspan="' . count($columns) . '" style="text-align: center; padding: 20px; color: #888;">Nog geen gegevens. Klik op "Rij toevoegen" in beheermodus om data toe te voegen.</td></tr>';
-                            }
-
-                            echo '</tbody>';
-                            echo '</table>';
-                            echo '</div>';
-                            echo '</section>';
-                        } else {
-                            // Er is wel een tabel, maar geen uitleesbare kolomdefinitie.
-                            echo '<div class="record">Geen kolommen gevonden voor deze tabel</div>';
-                        }
+                    if ($currentTableName === 'homepagina') {
+                        // Homepagina heeft al een welkomsectie in de hero, geen dubbele inhoud nodig.
+                        $conn->close();
                     } else {
-                        // De gevraagde tabel bestaat niet (meer) of is ongeldig.
-                        echo '<div class="record">Tabel niet gevonden</div>';
-                    }
+                        // Gebruik de tabelnaam uit de pagina-context als primaire bron.
+                        $tableParam = $currentTableName;
 
-                    // Sluit databaseverbinding zodra de renderlogica klaar is.
-                    $conn->close();
+                        // Lees nogmaals alle tabellen; hiermee valideren we of de gekozen tabel bestaat.
+                        $tables = [];
+                        $tablesResult = $conn->query("SHOW TABLES");
+                        if ($tablesResult && $tablesResult->num_rows > 0) {
+                            while ($tableRow = $tablesResult->fetch_array()) {
+                                $tables[] = $tableRow[0];
+                            }
+                        }
+
+                        // Fallback naar de eerste beschikbare tabel als er geen specifieke tabel is gezet.
+                        if (!$tableParam && count($tables) > 0) {
+                            $tableParam = $tables[0];
+                        }
+
+                        // Ga alleen verder als de tabel ook echt in de databaselijst voorkomt.
+                        if ($tableParam && in_array($tableParam, $tables, true)) {
+                            $displayName = ucwords(str_replace('_', ' ', $tableParam));
+
+                            // Haal alle kolommen op zodat de tabelkop en SELECT-query dynamisch zijn.
+                            $columnsResult = $conn->query("SHOW COLUMNS FROM `$tableParam`");
+                            $columns = [];
+
+                            if ($columnsResult && $columnsResult->num_rows > 0) {
+                                while ($columnRow = $columnsResult->fetch_assoc()) {
+                                    $columns[] = $columnRow['Field'];
+                                }
+                            }
+
+                            if (!empty($columns)) {
+                                // Bouw dynamisch een veilige kolomlijst op voor de SELECT-query.
+                                $columnList = implode(', ', array_map(function($col) { return "`$col`"; }, $columns));
+                                $sql = "SELECT $columnList FROM `$tableParam`";
+                                $result = $conn->query($sql);
+
+                                // Toon altijd de tabelstructuur, ook als er nog geen records zijn.
+                                echo '<section class="Data"><h2>' . htmlspecialchars($displayName) . '</h2>';
+                                echo '<div class="table-wrapper">';
+                                echo '<table class="data-table">';
+                                echo '<thead>';
+                                echo '<tr>';
+
+                                foreach ($columns as $column) {
+                                    $columnId = strtolower($column) . '-column';
+                                    $displayColumn = ucfirst(str_replace('_', ' ', $column));
+                                    echo '<th id="' . htmlspecialchars($columnId) . '" data-column="' . htmlspecialchars($column) . '">' . htmlspecialchars($displayColumn) . '</th>';
+                                }
+
+                                echo '</tr>';
+                                echo '</thead>';
+                                echo '<tbody>';
+
+                                if ($result && $result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<tr>';
+                                        foreach ($columns as $column) {
+                                            // Escapen van celwaarden voorkomt XSS bij gebruikersinvoer.
+                                            echo '<td>' . htmlspecialchars($row[$column] ?? '') . '</td>';
+                                        }
+                                        echo '</tr>';
+                                    }
+                                } else {
+                                    // Toon een duidelijke leegstatus als er nog geen data bestaat.
+                                    echo '<tr><td colspan="' . count($columns) . '" style="text-align: center; padding: 20px; color: #888;">Nog geen gegevens. Klik op "Rij toevoegen" in beheermodus om data toe te voegen.</td></tr>';
+                                }
+
+                                echo '</tbody>';
+                                echo '</table>';
+                                echo '</div>';
+                                echo '</section>';
+                            } else {
+                                // Er is wel een tabel, maar geen uitleesbare kolomdefinitie.
+                                echo '<div class="record">Geen kolommen gevonden voor deze tabel</div>';
+                            }
+                        } else {
+                            // De gevraagde tabel bestaat niet (meer) of is ongeldig.
+                            echo '<div class="record">Tabel niet gevonden</div>';
+                        }
+
+                        // Sluit databaseverbinding zodra de renderlogica klaar is.
+                        $conn->close();
+                    }
                 }
                 ?>
             </div>
