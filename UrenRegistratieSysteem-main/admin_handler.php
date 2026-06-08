@@ -6,8 +6,8 @@ header('Content-Type: application/json');
 $servername = "127.0.0.1";
 $username = "root";
 $password = "";
-$dbname = "UrenRegistratieSysteem";
-$dbport = 3307;
+$dbname = "UrenRegister";
+$dbport = 3306;
 
 mysqli_report(MYSQLI_REPORT_OFF);
 // Maak een nieuwe databaseverbinding aan met de opgegeven configuratie.
@@ -29,12 +29,37 @@ $action = $_POST['action'] ?? '';
 
 // Verwerk alle beheerdersacties via een centrale switch zodat elke actie afgebakend blijft.
 switch ($action) {
+    case 'login':
+        $email = $_POST['username'] ?? '';
+        $pass = $_POST['password'] ?? '';
+
+        $stmt = $conn->prepare("\n            SELECT m.*, r.rol, r.wachtwoord \n            FROM medewerkers m\n            INNER JOIN medewerker_rechten r ON m.`medewerker_ID` = r.medewerker_id\n            WHERE m.`werkmail` = ?\n        ");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $medewerker = $result->fetch_assoc();
+
+        if ($medewerker && password_verify($pass, $medewerker['wachtwoord'])) {
+            echo json_encode([
+                'success' => true,
+                'role' => $medewerker['rol'],
+                'medewerker_id' => $medewerker['medewerker_ID']
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Gebruiker niet gevonden of verkeerd wachtwoord.'
+            ]);
+        }
+        $stmt->close();
+        break;
+
     case 'update_cell':
         // Haal doelgegevens op: tabel, kolom, nieuwe waarde en de identifier van de rij.
         $table = $_POST['table'] ?? '';
         $column = $_POST['column'] ?? '';
         $value = $_POST['value'] ?? '';
-        $idColumn = $_POST['id_column'] ?? 'id';
+        $idColumn = $_POST['id_column'] ?? 'medewerker_ID';
         $idValue = $_POST['id_value'] ?? '';
         
         // Filter tabel- en kolomnamen op veilige tekens om SQL-injectie via identifiers te beperken.
@@ -93,7 +118,7 @@ switch ($action) {
     case 'delete_row':
         // Verwijder exact een rij op basis van de meegegeven primaire sleutel/identifier.
         $table = $_POST['table'] ?? '';
-        $idColumn = $_POST['id_column'] ?? 'id';
+        $idColumn = $_POST['id_column'] ?? 'medewerker_ID';
         $idValue = $_POST['id_value'] ?? '';
         
         // Sanitize identifiers zodat alleen geldige tabel- en kolomnamen overblijven.
@@ -155,9 +180,9 @@ switch ($action) {
         $tableName = $_POST['table_name'] ?? '';
         $tableName = preg_replace('/[^a-zA-Z0-9_]/', '', $tableName);
         
-        // Standaardschema: id, naam en aanmaakdatum.
+        // Standaardschema met medewerker_ID als primaire sleutel.
         $sql = "CREATE TABLE `$tableName` (
-            `id` INT AUTO_INCREMENT PRIMARY KEY,
+            `medewerker_ID` INT AUTO_INCREMENT PRIMARY KEY,
             `name` VARCHAR(255),
             `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )";
@@ -195,7 +220,7 @@ switch ($action) {
 
         // Bescherm kernbestanden van het systeem tegen verwijdering.
         $protected = ['index.php', 'table_template.php', 'admin_handler.php', 
-                      'generate_pages.php', 'get_schema.php', 'homepagina.php', 'support_ticket_pagina.php'];
+                  'generate_pages.php', 'get_schema.php', 'homepagina.php', 'support_ticket_pagina.php'];
         if (in_array($filename, $protected)) {
             echo json_encode(['success' => false, 'error' => 'Beveiligd bestand kan niet worden verwijderd']);
             break;

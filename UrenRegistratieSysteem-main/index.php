@@ -47,7 +47,7 @@
                                     $servername = "127.0.0.1";
                                     $username   = "root";
                                     $password   = "";
-                                    $dbname     = "testdatabase2";
+                                    $dbname     = "UrenRegister";
                                     $dbport     = 3306;
 
                                     // Maak verbinding; als dat lukt tonen we alle tabelpagina-links.

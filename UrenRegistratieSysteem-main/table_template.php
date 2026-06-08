@@ -42,7 +42,7 @@
             $servername = "127.0.0.1";
             $username   = "root";
             $password   = "";
-            $dbname     = "testdatabase2";
+            $dbname     = "UrenRegister";
             $dbport     = 3306;
 
             mysqli_report(MYSQLI_REPORT_OFF);
@@ -52,6 +52,9 @@
                 if ($tablesResult && $tablesResult->num_rows > 0) {
                     while ($tableRow = $tablesResult->fetch_array()) {
                         $tableName = $tableRow[0];
+                            if ($tableName === 'medewerker_rechten') {
+                                continue;
+                            }
                         // Toon een leesbare knopnaam voor elke tabel.
                         $displayName = ucwords(str_replace('_', ' ', $tableName));
                         echo '<a class="table-link" href="' . htmlspecialchars($tableName) . '.php">' . htmlspecialchars($displayName) . '</a>';
@@ -82,7 +85,6 @@
                         <span class="welcome-badge">Welkom!</span>
                         <h2>Fijn dat je er bent</h2>
                         <p>Dit is de startpagina voor iedereen. Gebruik hierboven de tabbladen om snel naar medewerkers, uren, opdrachten of support te gaan.</p>
-                        <p class="welcome-hint">Je supportticket wordt automatisch opgeslagen in de database en kan worden beheerd via de adminpagina.</p>
                     </div>
                 <?php else: ?>
                     <h2>UrenRegistratieSysteem</h2>

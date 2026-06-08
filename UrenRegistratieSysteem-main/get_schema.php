@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 $servername = "127.0.0.1";
 $username   = "root";
 $password   = "";
-$dbname     = "testdatabase2";
+$dbname     = "UrenRegister";
 $dbport     = 3306;
 
 mysqli_report(MYSQLI_REPORT_OFF);
