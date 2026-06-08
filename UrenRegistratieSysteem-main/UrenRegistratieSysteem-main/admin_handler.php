@@ -6,8 +6,8 @@ header('Content-Type: application/json');
 $servername = "127.0.0.1";
 $username = "root";
 $password = "";
-$dbname = "UrenRegistratieSysteem";
-$dbport = 3307;
+$dbname = "urenregister";
+$dbport = 3306;
 
 mysqli_report(MYSQLI_REPORT_OFF);
 // Maak een nieuwe databaseverbinding aan met de opgegeven configuratie.

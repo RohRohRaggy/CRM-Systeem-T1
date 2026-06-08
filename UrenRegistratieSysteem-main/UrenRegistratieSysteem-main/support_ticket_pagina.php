@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $servername = "127.0.0.1";
         $username   = "root";
         $password   = "";
-        $dbname     = "testdatabase2";
+        $dbname     = "urenregister";
         $dbport     = 3306;
         mysqli_report(MYSQLI_REPORT_OFF);
         $conn = @new mysqli($servername, $username, $password, $dbname, $dbport);
