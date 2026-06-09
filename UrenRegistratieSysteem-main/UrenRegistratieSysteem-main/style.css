@@ -969,3 +969,41 @@ nav .right a:last-child {
         box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
     }
 }
+
+
+/* De afgeronde kaart look */
+.main-card {
+    background-color: #e8f7ee; 
+    width: 90%;
+    max-width: 1100px;
+    margin: 40px auto; 
+    border-radius: 40px; 
+    border: 4px solid #083c32;
+    padding: 40px;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
+}
+
+/* De tabel container die IN de kaart valt */
+.table-wrapper {
+    border: 2px solid #083c32;
+    background: #fff;
+    border-radius: 20px; 
+    overflow: hidden; /* Dit zorgt dat de tabel de ronde hoeken volgt */
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background: #d7e9dd;
+    border-bottom: 3px solid #083c32;
+    padding: 15px;
+    text-align: left;
+}
+
+.data-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+}
