@@ -160,8 +160,7 @@
                                         echo '<tr>';
                                         foreach ($columns as $column) {
                                             // Escapen van celwaarden voorkomt XSS bij gebruikersinvoer.
-                                            $displayColumn = ucfirst(str_replace('_', ' ', $column));
-                                            echo '<td data-label="' . htmlspecialchars($displayColumn) . '">' . htmlspecialchars($row[$column] ?? '') . '</td>';
+                                            echo '<td>' . htmlspecialchars($row[$column] ?? '') . '</td>';
                                         }
                                         echo '</tr>';
                                     }
@@ -202,4 +201,3 @@
 </div>
 </body>
 </html>
-
