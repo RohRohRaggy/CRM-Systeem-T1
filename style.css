@@ -643,6 +643,17 @@ nav .right a:last-child {
         min-height:100%
     }
 
+    body {
+        overflow-x: hidden;
+    }
+
+    .main-card {
+        width: 96%;
+        padding: 18px;
+        border-radius: 24px;
+        margin: 20px auto;
+    }
+
     /* Nav bar */
     nav {
         padding: 0 2%;
@@ -685,15 +696,34 @@ nav .right a:last-child {
     }
 
     /* Responsive table improvements */
-    .data-table th,
-    .data-table td {
-        padding: 8px 12px;
-        font-size: 0.875em;
-        min-width: 60px;
+    .table-wrapper {
+        width: 100%;
+        overflow: hidden;
+        margin: 1rem 0;
     }
 
-    .table-wrapper {
-        margin: 1.5% 0;
+    .data-table {
+        width: 100%;
+        table-layout: fixed;
+        border-spacing: 0;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 6px 8px;
+        font-size: 0.78em;
+        min-width: 0;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .data-table th {
+        text-align: left;
+    }
+
+    .data-table td {
+        vertical-align: top;
     }
 
 }
