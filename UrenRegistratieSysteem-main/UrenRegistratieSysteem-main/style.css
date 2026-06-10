@@ -40,8 +40,6 @@ a {
     background: #b1b1b1;
     background: linear-gradient(180deg, rgba(222, 222, 222, 1) 0%, rgb(155, 155, 155) 50%);
     padding: 2%;
-    display: flex;            /* flex container */
-    flex-direction: column;   /* vertical (top → bottom) */
     overflow: visible;
 }
 
@@ -470,15 +468,18 @@ nav .right a:last-child {
 /* Wrapper for table to enable horizontal scrolling */
 .table-wrapper {
     width: 100%;
-    overflow-x: visible;
-    overflow-y: visible;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
     margin: 2% 0;
     background: transparent;
     border-radius: 8px;
 }
 
 .data-table {
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     border-collapse: separate;
     border-spacing: 8px;
     margin: 0;
@@ -638,9 +639,10 @@ nav .right a:last-child {
 @media (max-width: 800px) { 
     /*wrapper*/
     .wrapper {
-        min-width: 90%;
-        max-width: 98%;
-        min-height:100%
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        min-height:100%;
     }
 
     /* Nav bar */
@@ -743,6 +745,11 @@ nav .right a:last-child {
 }
 
 @media print {
+    @page {
+        size: landscape;
+        margin: 10mm;
+    }
+
     .wrapper > *:not(main),
     nav,
     .hero-section,
@@ -757,11 +764,34 @@ nav .right a:last-child {
     
     section.Data {
         margin: 0 !important;
-        padding: 20px !important;
+        padding: 0 !important;
     }
     
     body {
         background: white !important;
+    }
+
+    .table-wrapper {
+        width: 100% !important;
+        overflow: visible !important;
+        margin: 0 !important;
+    }
+
+    .data-table {
+        width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        border-spacing: 0 !important;
+    }
+
+    .data-table th,
+    .data-table td {
+        min-width: 0 !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+        padding: 6px 8px !important;
+        box-shadow: none !important;
     }
 }
 
@@ -988,16 +1018,20 @@ nav .right a:last-child {
     border: 2px solid #083c32;
     background: #fff;
     border-radius: 20px; 
-    overflow: hidden; /* Dit zorgt dat de tabel de ronde hoeken volgt */
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     border-collapse: collapse;
 }
 
 .data-table th {
-    background: #d7e9dd;
+    background: #023914;
     border-bottom: 3px solid #083c32;
     padding: 15px;
     text-align: left;
@@ -1005,5 +1039,5 @@ nav .right a:last-child {
 
 .data-table td {
     padding: 12px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #b31111;
 }
