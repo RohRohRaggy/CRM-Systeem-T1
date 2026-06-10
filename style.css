@@ -40,8 +40,6 @@ a {
     background: #b1b1b1;
     background: linear-gradient(180deg, rgba(222, 222, 222, 1) 0%, rgb(155, 155, 155) 50%);
     padding: 2%;
-    display: flex;            /* flex container */
-    flex-direction: column;   /* vertical (top → bottom) */
     overflow: visible;
 }
 
@@ -470,15 +468,18 @@ nav .right a:last-child {
 /* Wrapper for table to enable horizontal scrolling */
 .table-wrapper {
     width: 100%;
-    overflow-x: visible;
-    overflow-y: visible;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
     margin: 2% 0;
     background: transparent;
     border-radius: 8px;
 }
 
 .data-table {
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     border-collapse: separate;
     border-spacing: 8px;
     margin: 0;
@@ -638,9 +639,10 @@ nav .right a:last-child {
 @media (max-width: 800px) { 
     /*wrapper*/
     .wrapper {
-        min-width: 90%;
-        max-width: 98%;
-        min-height:100%
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        min-height:100%;
     }
 
     /* Nav bar */
@@ -1016,11 +1018,15 @@ nav .right a:last-child {
     border: 2px solid #083c32;
     background: #fff;
     border-radius: 20px; 
-    overflow: hidden; /* Dit zorgt dat de tabel de ronde hoeken volgt */
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
-    width: 100%;
+    width: max-content;
+    min-width: 100%;
     border-collapse: collapse;
 }
 
