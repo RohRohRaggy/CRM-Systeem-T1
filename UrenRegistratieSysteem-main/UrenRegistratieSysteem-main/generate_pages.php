@@ -35,7 +35,8 @@ $protectedFiles = [
     'style.css',
     'Team_3.php',
     'homepagina.php',
-    'support_ticket_pagina.php'
+    'support_ticket_pagina.php',
+    'rapportage_overzicht.php'
 ];
 
 // Pagina's die los van de tabelgenerator blijven bestaan.
