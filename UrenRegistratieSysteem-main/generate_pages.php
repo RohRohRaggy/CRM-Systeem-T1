@@ -39,7 +39,9 @@ $protectedFiles = [
     "support.php",
     "test_gebruikers.php",
     "support_tickets.php",
-    "support_ticket_pagina.php"
+    "support_ticket_pagina.php",
+    "rapportage.php"
+    
 ];
 
 // Lees alle huidige tabellen uit de database.

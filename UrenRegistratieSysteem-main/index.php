@@ -14,7 +14,6 @@
 <body>
   
 <div class="wrapper">     
-            
             <main>
                 <!DOCTYPE html>
                 <html lang="nl">

@@ -37,12 +37,13 @@
             // Voeg vaste links toe zodat Home en Support altijd als tabs zichtbaar zijn.
             echo '<a class="table-link" href="homepagina.php">Homepagina</a>';
             echo '<a class="table-link" href="support_ticket_pagina.php">Support</a>';
+             
 
             // Maak opnieuw een DB-verbinding om dynamische navigatielinks op te bouwen.
             $servername = "127.0.0.1";
             $username   = "root";
             $password   = "";
-            $dbname     = "UrenRegister";
+            $dbname     = "urenregister";
             $dbport     = 3306;
 
             mysqli_report(MYSQLI_REPORT_OFF);
@@ -52,9 +53,6 @@
                 if ($tablesResult && $tablesResult->num_rows > 0) {
                     while ($tableRow = $tablesResult->fetch_array()) {
                         $tableName = $tableRow[0];
-                            if ($tableName === 'medewerker_rechten') {
-                                continue;
-                            }
                         // Toon een leesbare knopnaam voor elke tabel.
                         $displayName = ucwords(str_replace('_', ' ', $tableName));
                         echo '<a class="table-link" href="' . htmlspecialchars($tableName) . '.php">' . htmlspecialchars($displayName) . '</a>';
@@ -85,6 +83,7 @@
                         <span class="welcome-badge">Welkom!</span>
                         <h2>Fijn dat je er bent</h2>
                         <p>Dit is de startpagina voor iedereen. Gebruik hierboven de tabbladen om snel naar medewerkers, uren, opdrachten of support te gaan.</p>
+                        
                     </div>
                 <?php else: ?>
                     <h2>UrenRegistratieSysteem</h2>
