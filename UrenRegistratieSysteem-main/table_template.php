@@ -192,7 +192,7 @@
         </section>
 
         <footer class="footer">
-            <p>©TEAM 2 [2026]</p>
+            <p>©TEAM 1 [2026]</p>
         </footer>
         <br>
         <button id="backToTop" class="back-to-top" type="button" aria-label="Terug naar boven" title="Terug naar boven">

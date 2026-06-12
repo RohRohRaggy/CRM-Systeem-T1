@@ -18,6 +18,7 @@ $conn = new mysqli("127.0.0.1", "root", "", "UrenRegister", 3306);
         .data-table th { background-color: #004d26; color: white; padding: 12px; text-align: left; }
         .data-table td { padding: 12px; border-bottom: 1px solid #ddd; }
         .back-btn-container { text-align: center; margin: 30px; }
+        .footer {position: fixed; bottom: 0; width: 100%;  text-align: center; padding: 10px 0;}
     </style>
 </head>
 <body>
@@ -66,13 +67,18 @@ $conn = new mysqli("127.0.0.1", "root", "", "UrenRegister", 3306);
                 echo "<div class='highlight'>" . $r['count'] . "</div>";
                 ?>
             </div>
+
+            
         </div>
 
         <div class="back-btn-container">
-            <a href="index.php" class="search-btn">Terug naar menu</a>
+            <a href="homepagina.php" class="search-btn">Terug naar menu</a>
         </div>
+        
     </main>
+    
 </div>
+<footer class="footer"><p>©TEAM 1 [2026]</p></footer>
 
 </body>
 </html>

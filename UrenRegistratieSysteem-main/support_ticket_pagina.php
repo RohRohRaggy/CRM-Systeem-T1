@@ -382,7 +382,7 @@ if ($sent) $message = '<div class="msg msg-success">Bedankt — jouw ticket is a
                 </div>
             </section>
 
-            <footer class="footer"><p>©TEAM 2 [2026]</p></footer>
+            <footer class="footer"><p>©TEAM 1 [2026]</p></footer>
         </main>
     </div>
 </body>
