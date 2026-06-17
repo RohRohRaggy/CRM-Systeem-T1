@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>UrenRegistratieSysteem</title>
-    <script src="searchfunction.js" defer></script>
+    <script src="src/searchfunction.js" defer></script>
     <script src="admin.js" defer></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>UrenRegistratieSysteem</title>
     <!-- JavaScript voor zoeken, navigatiehulp en interactieve UI-functies. -->
-    <script src="searchfunction.js" defer></script>
+    <script src="src/searchfunction.js" defer></script>
     <script src="admin.js" defer></script>
     <!-- Centrale stylesheet voor layout, typografie en componentstijlen. -->
     <link rel="stylesheet" href="style.css">
@@ -21,7 +21,7 @@
                     <meta charset="utf-8">
                     <title>UrenRegistratieSysteem</title>
                     <!-- JavaScript voor zoeken, navigatiehulp en interactieve UI-functies. -->
-                    <script src="searchfunction.js" defer></script>
+                    <script src="src/searchfunction.js" defer></script>
                     <script src="admin.js" defer></script>
                     <!-- Centrale stylesheet voor layout, typografie en componentstijlen. -->
                     <link rel="stylesheet" href="style.css">
