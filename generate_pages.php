@@ -31,7 +31,7 @@ $protectedFiles = [
     'admin_handler.php',
     'generate_pages.php',
     'get_schema.php',
-    'searchfunction.js',
+    'src/searchfunction.js',
     'admin.js',
     'style.css',
     'Team_3.php',

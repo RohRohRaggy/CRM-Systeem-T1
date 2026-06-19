@@ -86,7 +86,7 @@ Wat je ermee kunt:
 
 Er zit ook wachtwoordcontrole in voor beheerders.
 
-### 4.5 `searchfunction.js`
+### 4.5 `src/searchfunction.js`
 Dit bestand regelt zoeken op de site.
 
 Wat kan de zoekfunctie:
@@ -215,7 +215,7 @@ De zoekfunctie is een sterk onderdeel van de site.
 
 ### 8.1 Eerst schema laden
 Bij opstarten van de pagina:
-- `searchfunction.js` vraagt `get_schema.php` op
+- `src/searchfunction.js` vraagt `get_schema.php` op
 - tabellen en kolommen worden in mappen gezet
 
 ### 8.2 Wat kan je typen?
@@ -240,7 +240,7 @@ Dat betekent:
 Dat maakt zoeken gebruiksvriendelijker.
 
 ## 9. Printen en terug naar boven
-In `searchfunction.js` zitten ook 2 handige UI-functies.
+In `src/searchfunction.js` zitten ook 2 handige UI-functies.
 
 ### 9.1 Printknop
 - Gebruiker klikt op printknop

@@ -16,7 +16,7 @@ html{
 
 body {
     font-family: 'poppins', sans-serif;
-    background-image: url("foto's/matrix background.jpg");
+    background-image: url("foto/matrix background.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     text-align: center;
@@ -496,7 +496,6 @@ nav .right a:last-child {
     padding: 12px 15px;
     text-align: left;
     font-weight: 600;
-    border-radius: 6px;
     box-shadow: 0 0.2% 0.4% rgba(0, 0, 0, 0.1);
     white-space: nowrap;
     min-width: 80px;
@@ -506,7 +505,6 @@ nav .right a:last-child {
     background: #dddddd;
     padding: 10px 15px;
     text-align: left;
-    border-radius: 6px;
     box-shadow: 0 0.1% 0.3% rgba(0, 0, 0, 0.08);
     word-wrap: break-word;
     overflow-wrap: break-word;
