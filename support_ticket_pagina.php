@@ -305,7 +305,7 @@ if ($sent) $message = '<div class="msg msg-success">Bedankt — jouw ticket is a
             <div class="left"><a href="index.php"></a></div>
             <div class="right">
                 <?php
-                echo '<a class="table-link" href="homepagina.php">Homepagina</a>';
+                echo '<a class="table-link" href="index.php">Homepagina</a>';
                 echo '<a class="table-link" href="support_ticket_pagina.php">Support</a>';
 
                 $servername = "127.0.0.1";

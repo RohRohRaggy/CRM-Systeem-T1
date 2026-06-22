@@ -41,7 +41,7 @@ $conn = new mysqli("127.0.0.1", "root", "", "UrenRegister", 3306);
         </div>
 
         <div class="back-btn-container">
-            <a href="homepagina.php" class="search-btn">Terug naar menu</a>
+            <a href="index.php" class="search-btn">Terug naar menu</a>
         </div>
     </main>
 </div>

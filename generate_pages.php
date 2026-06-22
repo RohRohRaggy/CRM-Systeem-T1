@@ -35,7 +35,7 @@ $protectedFiles = [
     'admin.js',
     'style.css',
     'Team_3.php',
-    'homepagina.php',
+    'index.php',
     "support.php",
     "test_gebruikers.php",
     "support_tickets.php",

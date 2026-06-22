@@ -35,7 +35,7 @@
         <div class="right">
             <?php
             // Voeg vaste links toe zodat Home en Support altijd als tabs zichtbaar zijn.
-            echo '<a class="table-link" href="homepagina.php">Homepagina</a>';
+            echo '<a class="table-link" href="index.php">Homepagina</a>';
             echo '<a class="table-link" href="support_ticket_pagina.php">Support</a>';
              
 
