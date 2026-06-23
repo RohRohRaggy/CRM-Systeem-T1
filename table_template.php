@@ -37,6 +37,7 @@
             // Voeg vaste links toe zodat Home en Support altijd als tabs zichtbaar zijn.
             echo '<a class="table-link" href="index.php">Homepagina</a>';
             echo '<a class="table-link" href="support_ticket_pagina.php">Support</a>';
+            echo '<a class="table-link" href="factuur.php">Factuur</a>';
              
 
             // Maak opnieuw een DB-verbinding om dynamische navigatielinks op te bouwen.

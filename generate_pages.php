@@ -40,7 +40,8 @@ $protectedFiles = [
     "test_gebruikers.php",
     "support_tickets.php",
     "support_ticket_pagina.php",
-    "rapportage.php"
+    "rapportage.php",
+    "factuur.php"
     
 ];
 
