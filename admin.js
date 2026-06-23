@@ -125,9 +125,12 @@ const makeTableEditable = () => {
         const row = cell.closest('tr');
         const idCell = row.querySelector('td:first-child');
         const rowIdValue = idCell.textContent.trim();
+        const headerIndex = Array.from(row.children).indexOf(cell);
+        const headerCell = table.querySelector(`thead th:nth-child(${headerIndex + 1})`);
+        const columnName = headerCell?.dataset.column || '';
 
-        // Als je een gewone medewerker bent, mag je ALLEEN je eigen medewerker_ID bewerken
-        if (employeeMode && rowIdValue !== loggedInUserId) {
+        // Als je een gewone medewerker bent, mag je alleen je eigen rij en alleen de uren aanpassen.
+        if (employeeMode && (rowIdValue !== loggedInUserId || columnName !== 'uren')) {
             cell.contentEditable = false;
             return; // Sla deze cel over, wordt niet bewerkbaar
         }
@@ -139,7 +142,7 @@ const makeTableEditable = () => {
         cell.addEventListener('blur', async function () {
             const cellIndex = Array.from(row.children).indexOf(this);
             const headerCell = table.querySelector(`thead th:nth-child(${cellIndex + 1})`);
-            const columnName = headerCell.dataset.column;
+            const columnName = headerCell?.dataset.column || '';
             const tableName = document.body.dataset.currentTable;
             const newValue = this.textContent.trim();
 
