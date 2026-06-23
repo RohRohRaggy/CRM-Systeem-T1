@@ -461,6 +461,8 @@ const deletePhysicalFile = async (tableName) => {
     }
 };
 
+
+
 // Initialiseer beheermodusfunctionaliteit zodra de DOM beschikbaar is.
 document.addEventListener('DOMContentLoaded', () => {
     initAdminButton();
