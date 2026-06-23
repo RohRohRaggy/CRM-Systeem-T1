@@ -118,6 +118,7 @@ const makeTableEditable = () => {
     if (!table) return;
 
     const loggedInUserId = localStorage.getItem('loggedInUserId');
+    const idColumn = table.querySelector('thead th:first-child')?.dataset.column || 'id';
     const cells = table.querySelectorAll('tbody td');
     
     cells.forEach(cell => {
@@ -142,7 +143,7 @@ const makeTableEditable = () => {
             const tableName = document.body.dataset.currentTable;
             const newValue = this.textContent.trim();
 
-            const success = await updateCell(tableName, columnName, newValue, rowIdValue);
+            const success = await updateCell(tableName, columnName, newValue, rowIdValue, idColumn);
             if (success) {
                 this.classList.add('cell-updated');
                 setTimeout(() => this.classList.remove('cell-updated'), 1000);
@@ -154,14 +155,14 @@ const makeTableEditable = () => {
 };
 
 // Verstuur een celwijziging naar de server en geef terug of het bijwerken is geslaagd.
-const updateCell = async (table, column, value, idValue) => {
+const updateCell = async (table, column, value, idValue, idColumn = 'id') => {
     try {
         const formData = new FormData();
         formData.append('action', 'update_cell');
         formData.append('table', table);
         formData.append('column', column);
         formData.append('value', value);
-        formData.append('id_column', 'medewerker_ID'); // Koppeling met jouw database identifier
+        formData.append('id_column', idColumn);
         formData.append('id_value', idValue);
 
         const response = await fetch('admin_handler.php', {
@@ -258,11 +259,13 @@ const showDeleteRowDialog = () => {
 // Verwijder een specifieke rij op basis van de opgegeven id.
 const deleteRow = async (idValue) => {
     const tableName = document.body.dataset.currentTable;
+    const table = document.querySelector('.data-table');
+    const idColumn = table?.querySelector('thead th:first-child')?.dataset.column || 'id';
 
     const formData = new FormData();
     formData.append('action', 'delete_row');
     formData.append('table', tableName);
-    formData.append('id_column', 'medewerker_ID'); 
+    formData.append('id_column', idColumn); 
     formData.append('id_value', idValue);
 
     try {

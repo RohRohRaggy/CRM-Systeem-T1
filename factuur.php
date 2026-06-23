@@ -16,6 +16,7 @@ $invoiceNumber = 'INV-' . date('Ymd') . '-' . ($selectedCustomerId > 0 ? $select
 $errorMessage = '';
 $customer = null;
 $orders = [];
+$databaseTables = [];
 $invoiceRows = [];
 $subtotal = 0.0;
 $vatRate = 0.21;
@@ -46,6 +47,16 @@ if ($conn->connect_error) {
     if ($customersResult) {
         while ($row = $customersResult->fetch_assoc()) {
             $customers[] = $row;
+        }
+    }
+
+    $tablesResult = $conn->query("SHOW TABLES");
+    if ($tablesResult && $tablesResult->num_rows > 0) {
+        while ($tableRow = $tablesResult->fetch_array()) {
+            $tableName = $tableRow[0];
+            if (preg_match('/^[a-zA-Z0-9_]+$/', $tableName)) {
+                $databaseTables[] = $tableName;
+            }
         }
     }
 
@@ -120,7 +131,9 @@ if ($conn->connect_error) {
     <script src="src/searchfunction.js" defer></script>
     <style>
         body.invoice-page {
-            background: linear-gradient(180deg, #f7f3ec 0%, #ebe2d6 100%);
+            background-image: url("foto/matrix background.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
             color: #1f2937;
             font-family: 'Poppins', sans-serif;
         }
@@ -188,6 +201,11 @@ if ($conn->connect_error) {
         .action-btn.secondary {
             background: #fff;
             color: #1f2937;
+        }
+
+        body.invoice-page nav .right a:last-child {
+            color: #1a1c20;
+            background-color: #e1e1e1;
         }
 
         .invoice-body {
@@ -398,6 +416,23 @@ if ($conn->connect_error) {
     </style>
 </head>
 <body class="invoice-page">
+    <nav class="topnav">
+        <div class="left">
+            <a href="index.php"></a>
+        </div>
+
+        <div class="right">
+            <a class="table-link" href="index.php">Homepagina</a>
+            <a class="table-link" href="support_ticket_pagina.php">Support</a>
+            <a class="table-link" href="factuur.php">Factuur</a>
+
+            <?php foreach ($databaseTables as $tableName): ?>
+                <?php $displayName = ucwords(str_replace('_', ' ', $tableName)); ?>
+                <a class="table-link" href="<?php echo htmlspecialchars($tableName); ?>.php"><?php echo htmlspecialchars($displayName); ?></a>
+            <?php endforeach; ?>
+        </div>
+    </nav>
+
     <div class="invoice-shell">
         <div class="invoice-topbar">
             <div>
