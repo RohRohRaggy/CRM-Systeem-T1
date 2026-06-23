@@ -10,33 +10,33 @@ $conn = new mysqli("127.0.0.1", "root", "", "UrenRegister", 3306);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; padding: 20px; }
-        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-height: 300px; }
-        .card h3 { color: #555; border-bottom: 2px solid #004d26; padding-bottom: 10px; margin-bottom: 20px; }
-        .highlight { font-size: 2em; color: #004d26; font-weight: bold; }
-        .back-btn-container { text-align: center; margin: 30px; }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; padding: 25px; }
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #eee; transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { color: #333; margin-bottom: 20px; font-weight: 600; font-size: 1.2rem; }
+        .back-btn-container { text-align: center; margin-bottom: 50px; }
+        .search-btn { background: #004d26; color: white; padding: 12px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
     <main>
-        <h1>Dashboard Rapportage</h1>
+        <h1 style="text-align: center; color: #004d26; margin: 30px;">Dashboard Rapportage</h1>
 
         <div class="dashboard-grid">
             <div class="card">
                 <h3>Omzetverloop (€)</h3>
-                <canvas id="lineChart"></canvas>
+                <canvas id="lineChart" height="200"></canvas>
             </div>
-
             <div class="card">
                 <h3>Verdeling Uren per Maand</h3>
-                <canvas id="pieChart"></canvas>
+                <canvas id="pieChart" height="200"></canvas>
             </div>
-
             <div class="card" style="grid-column: span 2;">
                 <h3>Uren per maand</h3>
-                <canvas id="barChart"></canvas>
+                <canvas id="barChart" height="100"></canvas>
             </div>
         </div>
 
@@ -47,27 +47,39 @@ $conn = new mysqli("127.0.0.1", "root", "", "UrenRegister", 3306);
 </div>
 
 <script>
-    // Data uit PHP halen
     const labels = [<?php $res = $conn->query("SELECT maand FROM rapportage_overzicht ORDER BY maand ASC"); while($r = $res->fetch_assoc()) echo "'{$r['maand']}',"; ?>];
     const omzetData = [<?php $res = $conn->query("SELECT totale_omzet FROM rapportage_overzicht ORDER BY maand ASC"); while($r = $res->fetch_assoc()) echo "{$r['totale_omzet']},"; ?>];
     const urenData = [<?php $res = $conn->query("SELECT totaal_uren FROM rapportage_overzicht ORDER BY maand ASC"); while($r = $res->fetch_assoc()) echo "{$r['totaal_uren']},"; ?>];
 
-    // 1. Lijn grafiek
+    // Globale opties voor een rustige uitstraling
+    const commonOpts = { responsive: true, plugins: { legend: { position: 'bottom' } } };
+
+    // 1. Lijn grafiek (Gradient effect)
     new Chart(document.getElementById('lineChart'), {
         type: 'line',
-        data: { labels: labels, datasets: [{ label: 'Omzet', data: omzetData, borderColor: '#004d26', fill: true, backgroundColor: 'rgba(0, 77, 38, 0.1)' }] }
+        data: { labels: labels, datasets: [{ 
+            label: 'Omzet', data: omzetData, borderColor: '#004d26', tension: 0.4, fill: true, 
+            backgroundColor: 'rgba(0, 77, 38, 0.05)', borderWidth: 3 
+        }] },
+        options: commonOpts
     });
 
-    // 2. Cirkel grafiek
+    // 2. Cirkel grafiek (Soft colors)
     new Chart(document.getElementById('pieChart'), {
-        type: 'pie',
-        data: { labels: labels, datasets: [{ data: urenData, backgroundColor: ['#004d26', '#00753a', '#009e4d', '#4ade80', '#86efac'] }] }
+        type: 'doughnut', // Doughnut oogt vaak moderner dan Pie
+        data: { labels: labels, datasets: [{ 
+            data: urenData, backgroundColor: ['#004d26', '#00753a', '#22c55e', '#86efac', '#dcfce7'] 
+        }] },
+        options: { ...commonOpts, cutout: '70%' } // De hole in het midden maakt het professioneel
     });
 
-    // 3. Staaf grafiek
+    // 3. Staaf grafiek (Afgeronde hoeken)
     new Chart(document.getElementById('barChart'), {
         type: 'bar',
-        data: { labels: labels, datasets: [{ label: 'Totaal Uren', data: urenData, backgroundColor: '#004d26' }] }
+        data: { labels: labels, datasets: [{ 
+            label: 'Uren', data: urenData, backgroundColor: '#004d26', borderRadius: 10 
+        }] },
+        options: { ...commonOpts, scales: { y: { beginAtZero: true } } }
     });
 </script>
 
