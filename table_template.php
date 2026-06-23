@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>UrenRegistratieSysteem</title>
-    <script src="searchfunction.js" defer></script>
+    <script src="src/searchfunction.js" defer></script>
     <script src="admin.js" defer></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,8 +35,10 @@
         <div class="right">
             <?php
             // Voeg vaste links toe zodat Home en Support altijd als tabs zichtbaar zijn.
-            echo '<a class="table-link" href="homepagina.php">Homepagina</a>';
+            echo '<a class="table-link" href="index.php">Homepagina</a>';
             echo '<a class="table-link" href="support_ticket_pagina.php">Support</a>';
+            echo '<a class="table-link" href="factuur.php">Factuur</a>';
+             
 
             // Maak opnieuw een DB-verbinding om dynamische navigatielinks op te bouwen.
             $servername = "127.0.0.1";
@@ -191,7 +193,7 @@
         </section>
 
         <footer class="footer">
-            <p>©TEAM 2 [2026]</p>
+            <p>©TEAM 1 [2026]</p>
         </footer>
         <br>
         <button id="backToTop" class="back-to-top" type="button" aria-label="Terug naar boven" title="Terug naar boven">

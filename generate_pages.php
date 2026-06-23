@@ -3,11 +3,12 @@ header('Content-Type: application/json');
 
 // Dit script genereert automatisch tabelpagina's op basis van de huidige database-structuur.
 // Belangrijk: dit bestand is bedoeld voor beheeracties en niet voor normaal gebruikersverkeer.
+
 // Databaseconfiguratie voor de lokale MySQL-instantie.
 $servername = "127.0.0.1";
 $username = "root";
 $password = "";
-$dbname = "urenregister";
+$dbname = "UrenRegister";
 $dbport = 3306;
 
 mysqli_report(MYSQLI_REPORT_OFF);
@@ -30,18 +31,18 @@ $protectedFiles = [
     'admin_handler.php',
     'generate_pages.php',
     'get_schema.php',
-    'searchfunction.js',
+    'src/searchfunction.js',
     'admin.js',
     'style.css',
     'Team_3.php',
-    'homepagina.php',
-    'support_ticket_pagina.php'
-];
-
-// Pagina's die los van de tabelgenerator blijven bestaan.
-$reservedTableNames = [
-    'homepagina',
-    'support_ticket_pagina'
+    'index.php',
+    "support.php",
+    "test_gebruikers.php",
+    "support_tickets.php",
+    "support_ticket_pagina.php",
+    "rapportage.php",
+    "factuur.php"
+    
 ];
 
 // Lees alle huidige tabellen uit de database.
@@ -89,11 +90,6 @@ foreach ($files as $file) {
 
 // Stap 2: maak voor elke tabel een vers pagina-bestand op basis van de template-aanpak.
 foreach ($databaseTables as $tableName) {
-    // Reserveer speciale pagina's zodat ze niet worden overschreven door de tabelgenerator.
-    if (in_array($tableName, $reservedTableNames, true)) {
-        continue;
-    }
-
     $filename = $tableName . '.php';
     
     // Inhoud van elk gegenereerd bestand: stel de tabel in en include de centrale template.

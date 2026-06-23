@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $servername = "127.0.0.1";
         $username   = "root";
         $password   = "";
-        $dbname     = "urenregister";
+        $dbname     = "UrenRegister";
         $dbport     = 3306;
         mysqli_report(MYSQLI_REPORT_OFF);
         $conn = @new mysqli($servername, $username, $password, $dbname, $dbport);
@@ -67,7 +67,7 @@ if ($sent) $message = '<div class="msg msg-success">Bedankt — jouw ticket is a
 <head>
     <meta charset="utf-8">
     <title>Support - UrenRegistratieSysteem</title>
-    <script src="searchfunction.js" defer></script>
+    <script src="src/searchfunction.js" defer></script>
     <script src="admin.js" defer></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -305,7 +305,7 @@ if ($sent) $message = '<div class="msg msg-success">Bedankt — jouw ticket is a
             <div class="left"><a href="index.php"></a></div>
             <div class="right">
                 <?php
-                echo '<a class="table-link" href="homepagina.php">Homepagina</a>';
+                echo '<a class="table-link" href="index.php">Homepagina</a>';
                 echo '<a class="table-link" href="support_ticket_pagina.php">Support</a>';
 
                 $servername = "127.0.0.1";
@@ -382,7 +382,7 @@ if ($sent) $message = '<div class="msg msg-success">Bedankt — jouw ticket is a
                 </div>
             </section>
 
-            <footer class="footer"><p>©TEAM 2 [2026]</p></footer>
+            <footer class="footer"><p>©TEAM 1 [2026]</p></footer>
         </main>
     </div>
 </body>
