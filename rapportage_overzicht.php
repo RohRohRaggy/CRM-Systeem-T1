@@ -52,6 +52,9 @@ $actieve_maanden = $conn->query("SELECT COUNT(*) as aantal FROM rapportage_overz
 <div class="back-btn-container">
     <a href="index.php" class="search-btn">Terug naar menu</a>
 </div>
+ <footer class="footer">
+            <p>©TEAM 1 [2026]</p>
+        </footer>
 
 <script>
     const labels = [<?php $res = $conn->query("SELECT maand FROM rapportage_overzicht ORDER BY maand ASC"); while($r = $res->fetch_assoc()) echo "'{$r['maand']}',"; ?>];
